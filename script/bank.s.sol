@@ -4,16 +4,16 @@ pragma solidity ^0.8.13;
 import {Script, console} from "forge-std/Script.sol";
 import {Bank} from "../src/bank.sol";
 
-contract CounterScript is Script {
-    Bank public bank;
-
-    function setUp() public {}
-
+contract DeployBank is Script {
     function run() public {
-        vm.startBroadcast();
+        uint256 privateKey = vm.envUint("NFT_PRIVATE_KEY");
+        address deployer = vm.addr(privateKey);
 
-        bank = new Bank();
+        // 检查并打印余额
+        console.log("Deployer Balance", deployer.balance);
 
+        vm.startBroadcast(privateKey);
+        new Bank();
         vm.stopBroadcast();
     }
 }

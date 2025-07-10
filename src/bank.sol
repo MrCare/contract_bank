@@ -39,7 +39,7 @@ contract Bank {
     function deposit() public payable{
         balances[msg.sender] += msg.value; // 记录存款账户的存款总额
         total += msg.value; // 可以删除只用合约余额 记录bank中存款总额
-        _updateTopTree(msg.sender, msg.value); // 更新前三个存款最多的人
+        _updateTopTree(msg.sender, balances[msg.sender]); // 更新前三个存款最多的人
 
     }
     modifier isAdmin {

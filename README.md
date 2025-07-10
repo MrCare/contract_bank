@@ -15,4 +15,4 @@
 
 ### 部署
 - 测试网部署成功:
-- 合约地址与scanUrl: [0xdf62c56F0F5B8B68B362E01315087bEF6a760708](https://sepolia.etherscan.io/address/0xdf62c56f0f5b8b68b362e01315087bef6a760708#code)
+- 合约地址与scanUrl: [0x5aE5764B4cBfE7597ADe67C5a30a1006AFB006E1](https://sepolia.etherscan.io/address/0x5ae5764b4cbfe7597ade67c5a30a1006afb006e1#code)

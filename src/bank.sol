@@ -16,7 +16,7 @@ contract Bank {
     
     // 取款
     function withdraw(uint x) public isAdmin{
-        require(x < total, "withdraw more than total");
+        require(x <= total, "withdraw more than total");
         total -= x;
         payable(msg.sender).transfer(x);
     }
@@ -45,5 +45,8 @@ contract Bank {
     modifier isAdmin {
         require(msg.sender == admin, "you are not admin!");
         _;
+    }
+    receive() external payable {
+        deposit();
     }
 }

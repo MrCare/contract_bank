@@ -1,66 +1,18 @@
-## Foundry
+<!--
+ * @Author: Mr.Car
+ * @Date: 2025-07-10 08:52:43
+-->
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+# Changelog
 
-Foundry consists of:
+## [0.1.0] - 2024-07-08
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### 新增功能
+- 支持通过钱包直接存款到 Bank 合约
+- 记录每个地址的存款金额
+- 管理员可通过 `withdraw()` 方法提取资金
+- 跟踪存款金额前 3 名用户
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+### 部署
+- 测试网部署成功:
+- 合约地址与scanUrl: [0xdf62c56F0F5B8B68B362E01315087bEF6a760708](https://sepolia.etherscan.io/address/0xdf62c56f0f5b8b68b362e01315087bef6a760708#code)

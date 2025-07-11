@@ -21,10 +21,12 @@ contract CounterTest is Test {
         vm.deal(addrB, 10 ether);
         vm.deal(addrC, 10 ether);
     }
+
     function test_admin() public view {
         console.log(unicode"admin() -> 检查合约管理员地址是否为部署合约的地址");
         assertEq(bank.admin(), deployerAddress);
     }
+
     function test_cantSetAdmin() public {
         console.log(unicode"setAdmin() -> 检查非管理员是否能够调用setAdmin()");
         // 切换到不同地址执行操作
@@ -32,6 +34,7 @@ contract CounterTest is Test {
         vm.prank(addrA);
         bank.setAdmain(addrA);
     }
+
     function test_setAdmin() public {
         console.log(unicode"setAdmin() -> 检查是否能够重新设置管理员账户为addrA");
         // 切换到不同地址执行操作
@@ -39,6 +42,7 @@ contract CounterTest is Test {
         bank.setAdmain(addrA);
         assertEq(bank.admin(), addrA);
     }
+
     function test_deposit() public {
         console.log(unicode"deposit() -> 检查是否能够正常存款，查看余额");
         vm.prank(addrA);
@@ -50,29 +54,24 @@ contract CounterTest is Test {
         console.log(unicode"topThree() -> 检查是否能够正常记录top3");
         vm.prank(deployerAddress);
         bank.deposit{value: 50 wei}();
-        assertEq(bank.topThree(0),deployerAddress);
+        assertEq(bank.topThree(0), deployerAddress);
 
         vm.prank(addrA);
         bank.deposit{value: 100 wei}();
-        assertEq(bank.balances(addrA),100 wei); // 此时已经没有之前的 100 wei 了
-        assertEq(bank.topThree(0),addrA);
-        assertEq(bank.topThree(1),deployerAddress);
-
-
+        assertEq(bank.balances(addrA), 100 wei); // 此时已经没有之前的 100 wei 了
+        assertEq(bank.topThree(0), addrA);
+        assertEq(bank.topThree(1), deployerAddress);
 
         vm.prank(addrB);
         bank.deposit{value: 1000 wei}();
-        assertEq(bank.topThree(0),addrB);
-        assertEq(bank.topThree(1),addrA);
-        assertEq(bank.topThree(2),deployerAddress);
-
+        assertEq(bank.topThree(0), addrB);
+        assertEq(bank.topThree(1), addrA);
+        assertEq(bank.topThree(2), deployerAddress);
 
         vm.prank(addrC);
         bank.deposit{value: 10000 wei}();
-        assertEq(bank.topThree(0),addrC);
-        assertEq(bank.topThree(1),addrB);
-        assertEq(bank.topThree(2),addrA);
-
+        assertEq(bank.topThree(0), addrC);
+        assertEq(bank.topThree(1), addrB);
+        assertEq(bank.topThree(2), addrA);
     }
-
 }

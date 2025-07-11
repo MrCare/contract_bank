@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Bigbank} from "../src/bank.sol";
+import {Admin} from "../src/admin.sol";
 
 contract DeployBank is Script {
     function run() public {
@@ -13,7 +13,7 @@ contract DeployBank is Script {
         console.log("Deployer Balance", deployer.balance);
 
         vm.startBroadcast(privateKey);
-        new Bigbank();
+        new Admin();
         vm.stopBroadcast();
     }
 }

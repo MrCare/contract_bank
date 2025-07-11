@@ -137,3 +137,12 @@ Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/ba
 
 - 测试网部署成功:
 - 合约地址与scanUrl: [0x2feb07aa72860baf1951908cd20911a61b99309c#readContract](https://sepolia.etherscan.io/address/0x2feb07aa72860baf1951908cd20911a61b99309c#readContract)
+
+## [1.1.0] - 2024-07-11
+
+### 新增功能
+- 编写 IBank 接口及BigBank 合约，使其满足 Bank 实现 IBank， BigBank 继承自 Bank 
+- 要求存款金额 >0.001 ether（用modifier权限控制）
+- BigBank 合约支持转移管理员
+- 编写一个 Admin 合约， Admin 合约有自己的 Owner ，同时有一个取款函数 adminWithdraw(IBank bank) , adminWithdraw 中会调用 IBank 接口的 withdraw 方法从而把 bank 合约内的资金转移到 Admin 合约地址。
+- BigBank 和 Admin 合约 部署后，把 BigBank 的管理员转移给 Admin 合约地址，模拟几个用户的存款，然后Admin 合约的Owner地址调用 adminWithdraw(IBank bank) 把 BigBank 的资金转移到 Admin 地址。

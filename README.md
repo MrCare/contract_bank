@@ -136,4 +136,4 @@ Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/ba
 
 
 - 测试网部署成功:
-- 合约地址与scanUrl: [0x19317565B2161d3F9f67E54f24e5F90fe4dfA738](https://sepolia.etherscan.io/address/0x19317565b2161d3f9f67e54f24e5f90fe4dfa738)
+- 合约地址与scanUrl: [0x2feb07aa72860baf1951908cd20911a61b99309c#readContract](https://sepolia.etherscan.io/address/0x2feb07aa72860baf1951908cd20911a61b99309c#readContract)

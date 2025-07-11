@@ -5,7 +5,6 @@ contract Bank {
     mapping (address => uint) public balances;
     address[3] public topThree; 
     address public admin;
-    uint256 public total;
     
     constructor(){
         admin = msg.sender;
@@ -13,11 +12,13 @@ contract Bank {
     function setAdmain(address addr) public isAdmin{
         admin = addr;
     }
+    function total() public view returns(uint){
+        return address(this).balance;
+    }
     
     // 取款
     function withdraw(uint x) public isAdmin{
-        require(x <= total, "withdraw more than total");
-        total -= x;
+        require(x <= address(this).balance, "withdraw more than total balance");
         payable(msg.sender).transfer(x);
     }
 
@@ -38,7 +39,6 @@ contract Bank {
     // 存款
     function deposit() public payable{
         balances[msg.sender] += msg.value; // 记录存款账户的存款总额
-        total += msg.value; // 可以删除只用合约余额 记录bank中存款总额
         _updateTopTree(msg.sender, balances[msg.sender]); // 更新前三个存款最多的人
 
     }

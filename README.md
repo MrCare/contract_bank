@@ -146,3 +146,44 @@ Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/ba
 - BigBank 合约支持转移管理员
 - 编写一个 Admin 合约， Admin 合约有自己的 Owner ，同时有一个取款函数 adminWithdraw(IBank bank) , adminWithdraw 中会调用 IBank 接口的 withdraw 方法从而把 bank 合约内的资金转移到 Admin 合约地址。
 - BigBank 和 Admin 合约 部署后，把 BigBank 的管理员转移给 Admin 合约地址，模拟几个用户的存款，然后Admin 合约的Owner地址调用 adminWithdraw(IBank bank) 把 BigBank 的资金转移到 Admin 地址。
+
+### 新增功能
+- 编写一个 token 合约 CTX
+- 编写一个 TokenBank 合约，可以将自己的 Token 存入到 TokenBank， 和从 TokenBank 取出
+- TokenBank 有两个方法：
+  - deposit() : 需要记录每个地址的存入数量；
+  - withdraw() : 用户可以提取自己的之前存入的 token。
+
+*通过存款与取款测试：* `forge test --match-path ./test/tokenBank.t.sol -vvv`
+```Bash
+➜  contract_bank git:(main) ✗ forge test --match-path ./test/tokenBank.t.sol -vvv
+[⠊] Compiling...
+[⠆] Compiling 1 files with Solc 0.8.20
+[⠰] Solc 0.8.20 finished in 1.25s
+Compiler run successful!
+
+Ran 5 tests for test/tokenBank.t.sol:TokenBankTest
+[PASS] test_tokenBalances() (gas: 36505)
+Logs:
+  测试 Token 余额分配
+
+[PASS] test_tokenBankDeposit() (gas: 92796)
+Logs:
+  测试 TokenBank 存款功能
+
+[PASS] test_tokenBankOwner() (gas: 23058)
+Logs:
+  测试 TokenBank 所有者
+
+[PASS] test_tokenBankWithdraw() (gas: 100192)
+Logs:
+  测试 TokenBank 取款功能
+
+[PASS] test_tokenBasicInfo() (gas: 28233)
+Logs:
+  测试 Token 基础信息
+
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.05ms (1.44ms CPU time)
+
+Ran 1 test suite in 606.83ms (2.05ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
+```

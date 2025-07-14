@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.20;
 
 interface IBank {
     function setAdmain(address addr) external;
     function total() external view returns (uint256);
     function deposit() external payable;
-    function withdraw(uint x) external;
+    function withdraw(uint256 x) external;
 }
 
 abstract contract Bank is IBank {
-    mapping(address => uint) public balances;
+    mapping(address => uint256) public balances;
     address[3] public topThree;
     address public admin;
 
@@ -22,17 +22,17 @@ abstract contract Bank is IBank {
     }
 
     // 取款
-    function withdraw(uint x) public isAdmin {
+    function withdraw(uint256 x) public isAdmin {
         require(x <= address(this).balance, "withdraw more than total balance");
         payable(msg.sender).transfer(x);
     }
 
-    function _updateTopTree(address addr, uint amount) internal {
-        uint i = 0;
+    function _updateTopTree(address addr, uint256 amount) internal {
+        uint256 i = 0;
         while (i < 3) {
             if (amount > balances[topThree[i]]) {
                 address addrDropped = topThree[i];
-                uint amountDropped = balances[topThree[i]];
+                uint256 amountDropped = balances[topThree[i]];
                 topThree[i] = addr;
                 _updateTopTree(addrDropped, amountDropped);
                 break;
@@ -63,11 +63,11 @@ abstract contract Bank is IBank {
 }
 
 contract Bigbank is Bank {
-    modifier enoughAmount(){
-        require(msg.value > 0.001 ether, 'amount must > 0.001 eth!');
+    modifier enoughAmount() {
+        require(msg.value > 0.001 ether, "amount must > 0.001 eth!");
         _;
     }
-    
+
     function setAdmain(address addr) external isAdmin {
         admin = addr;
     }

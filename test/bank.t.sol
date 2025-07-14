@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import { Bigbank } from "../src/bank.sol";
+import {Bigbank} from "../src/bank.sol";
 
 contract BankTest is Test {
     Bigbank public bank;
@@ -36,9 +36,7 @@ contract BankTest is Test {
     }
 
     function test_setAdmin() public {
-        console.log(
-            unicode"setAdmin() -> 检查是否能够重新设置管理员账户为addrA"
-        );
+        console.log(unicode"setAdmin() -> 检查是否能够重新设置管理员账户为addrA");
         // 切换到不同地址执行操作
         vm.prank(deployerAddress);
         bank.setAdmain(addrA);
@@ -47,10 +45,10 @@ contract BankTest is Test {
 
     function test_deposit() public {
         console.log(unicode"deposit() -> 检查是否能够正常存款，查看余额");
-        vm.expectRevert(bytes('amount must > 0.001 eth!')); // expectRevert 要放在前面做；
+        vm.expectRevert(bytes("amount must > 0.001 eth!")); // expectRevert 要放在前面做；
         vm.prank(addrA);
         bank.deposit{value: 100 wei}();
-        
+
         vm.prank(addrA);
         bank.deposit{value: 0.01 ether}();
         assertEq(bank.balances(addrA), 0.01 ether);

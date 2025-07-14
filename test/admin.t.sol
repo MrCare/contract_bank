@@ -27,7 +27,7 @@ contract AdminTest is Test {
     function test_transferAdmin() public {
         console.log(unicode"将 bank 合约管理员转移给 admin 合约");
         bank.setAdmain(address(admin));
-        assertEq(bank.admin(),address(admin));
+        assertEq(bank.admin(), address(admin));
     }
 
     function test_withdraw() public {

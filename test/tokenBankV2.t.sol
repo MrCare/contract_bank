@@ -65,7 +65,7 @@ contract TokenBankV2Test is Test {
 
         // user1 存款
         vm.prank(user1);
-        token.transferWithCallback(address(tokenBank), TEST_AMOUNT);
+        token.transferWithCallback(address(tokenBank), TEST_AMOUNT, "");
 
         // 检查结果
         assertEq(tokenBank.getBalance(user1), TEST_AMOUNT);

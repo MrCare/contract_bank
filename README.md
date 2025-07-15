@@ -233,3 +233,78 @@ Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.06ms (1.21ms CPU 
 Ran 1 test suite in 568.51ms (2.06ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
 ➜  contract_bank git:(main) ✗ 
 ```
+
+### 部署测试网并使用 Uniswap 交换
+
+```bash
+forge script script/deployToken.s.sol:DeployToken \
+  --rpc-url $SEPOLIA_RPC \
+  --private-key $NFT_PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  -vvvv
+```
+
+```
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `dfnjyq7mgi8rkxpspvmywds7drvjajafmexhkbghpqtrqrb4tq`
+        URL: https://sepolia.etherscan.io/address/0xad36abb13d0c25e809fae580662544d87b826d98
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployToken.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployToken.s.sol/11155111/run-latest.json
+```
+
+## [2.0.0] - 2025-07-15
+### 新增功能
+
+- 编写一个简单的 NFTMarket 合约，使用自己发行的ERC20 扩展 Token 来买卖 NFT
+- NFTMarket 的函数有：
+  - `list()` : 实现上架功能，NFT 持有者可以设定一个价格（需要多少个 Token 购买该 NFT）并上架 NFT 到 NFTMarket，上架之后，其他人才可以购买
+
+  - `buyNFT()` : 普通的购买 NFT 功能，用户转入所定价的 token 数量，获得对应的 NFT
+
+  - 实现ERC20 扩展 Token 所要求的接收者方法 tokensReceived  ，在 tokensReceived 中实现NFT 购买功能(注意扩展的转账需要添加一个额外数据参数)
+
+### 部署并铸造NFT(1)
+
+```Bash
+ forge script script/deployNft.s.sol:DeployNFT \
+  --rpc-url $SEPOLIA_RPC \
+  --private-key $NFT_PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  -vvvv
+```
+*日志输出：*
+
+```Bash
+Submitting verification for [src/nft.sol:CarNFT] 0xd229E8AB85614BA1F98009615394fAc3528599BA.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `mbwciaijthg5tgmwcelkav4enffkgxbi2t78k7mzpvbncrtk2c`
+        URL: https://sepolia.etherscan.io/address/0xd229e8ab85614ba1f98009615394fac3528599ba
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployNft.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployNft.s.sol/11155111/run-latest.json
+
+```
+
+*NFT地址*:
+`https://testnets.opensea.io/assets/sepolia/0xd229E8AB85614BA1F98009615394fAc3528599BA/1 `
+
+###  实现MarkerNFT合约
+
+已经通过测试

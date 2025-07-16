@@ -5,6 +5,179 @@
 
 # Changelog
 
+## [2.0.0] - 2025-07-15
+### 新增功能
+
+- 编写一个简单的 NFTMarket 合约，使用自己发行的ERC20 扩展 Token 来买卖 NFT
+- NFTMarket 的函数有：
+  - `list()` : 实现上架功能，NFT 持有者可以设定一个价格（需要多少个 Token 购买该 NFT）并上架 NFT 到 NFTMarket，上架之后，其他人才可以购买
+
+  - `buyNFT()` : 普通的购买 NFT 功能，用户转入所定价的 token 数量，获得对应的 NFT
+
+  - 实现ERC20 扩展 Token 所要求的接收者方法 tokensReceived  ，在 tokensReceived 中实现NFT 购买功能(注意扩展的转账需要添加一个额外数据参数)
+
+### 部署并铸造NFT(1)
+
+```Bash
+ forge script script/deployNft.s.sol:DeployNFT \
+  --rpc-url $SEPOLIA_RPC \
+  --private-key $NFT_PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  -vvvv
+```
+*日志输出：*
+
+```Bash
+Submitting verification for [src/nft.sol:CarNFT] 0xd229E8AB85614BA1F98009615394fAc3528599BA.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `mbwciaijthg5tgmwcelkav4enffkgxbi2t78k7mzpvbncrtk2c`
+        URL: https://sepolia.etherscan.io/address/0xd229e8ab85614ba1f98009615394fac3528599ba
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployNft.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployNft.s.sol/11155111/run-latest.json
+
+```
+
+*NFT地址*:
+`https://testnets.opensea.io/assets/sepolia/0xd229E8AB85614BA1F98009615394fAc3528599BA/1 `
+
+###  实现MarkerNFT合约
+
+已经通过测试
+
+## [1.1.2] - 2025-07-15
+### 新增功能
+
+- 扩展 ERC20 合约 ，添加一个有 hook 功能的转账函数，如函数名为：transferWithCallback ，在转账时，如果目标地址是合约地址的话，调用目标地址的 tokensReceived() 方法。
+
+- 继承 TokenBank 编写 TokenBankV2，支持存入扩展的 ERC20 Token，用户可以直接调用 transferWithCallback 将 扩展的 ERC20 Token 存入到 TokenBankV2 中。
+
+- 备注：TokenBankV2 需要实现 tokensReceived 来实现存款记录工作
+
+*通过存款与取款测试：* 
+```Bash
+➜  contract_bank git:(main) ✗ forge test --match-contract TokenBankV2Test -vv
+[⠊] Compiling...
+[⠢] Compiling 2 files with Solc 0.8.20
+[⠆] Solc 0.8.20 finished in 1.16s
+Compiler run successful!
+
+Ran 5 tests for test/tokenBankV2.t.sol:TokenBankV2Test
+[PASS] test_tokenBalances() (gas: 36505)
+Logs:
+  测试 Token 余额分配
+
+[PASS] test_tokenBankDeposit() (gas: 86593)
+Logs:
+  测试 TokenBank 存款功能(使用 transferWithCallback)
+
+[PASS] test_tokenBankOwner() (gas: 23080)
+Logs:
+  测试 TokenBank 所有者
+
+[PASS] test_tokenBankWithdraw() (gas: 100258)
+Logs:
+  测试 TokenBank 取款功能
+
+[PASS] test_tokenBasicInfo() (gas: 28233)
+Logs:
+  测试 Token 基础信息
+
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.06ms (1.21ms CPU time)
+
+Ran 1 test suite in 568.51ms (2.06ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
+➜  contract_bank git:(main) ✗ 
+```
+
+### 部署测试网并使用 Uniswap 交换
+
+```bash
+forge script script/deployToken.s.sol:DeployToken \
+  --rpc-url $SEPOLIA_RPC \
+  --private-key $NFT_PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  -vvvv
+```
+
+```
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `dfnjyq7mgi8rkxpspvmywds7drvjajafmexhkbghpqtrqrb4tq`
+        URL: https://sepolia.etherscan.io/address/0xad36abb13d0c25e809fae580662544d87b826d98
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployToken.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployToken.s.sol/11155111/run-latest.json
+```
+
+
+
+## [1.1.1] - 2025-07-14
+
+### 新增功能
+- 编写一个 token 合约 CTX
+- 编写一个 TokenBank 合约，可以将自己的 Token 存入到 TokenBank， 和从 TokenBank 取出
+- TokenBank 有两个方法：
+  - deposit() : 需要记录每个地址的存入数量；
+  - withdraw() : 用户可以提取自己的之前存入的 token。
+
+*通过存款与取款测试：* `forge test --match-path ./test/tokenBank.t.sol -vvv`
+```Bash
+➜  contract_bank git:(main) ✗ forge test --match-path ./test/tokenBank.t.sol -vvv
+[⠊] Compiling...
+[⠆] Compiling 1 files with Solc 0.8.20
+[⠰] Solc 0.8.20 finished in 1.25s
+Compiler run successful!
+
+Ran 5 tests for test/tokenBank.t.sol:TokenBankTest
+[PASS] test_tokenBalances() (gas: 36505)
+Logs:
+  测试 Token 余额分配
+
+[PASS] test_tokenBankDeposit() (gas: 92796)
+Logs:
+  测试 TokenBank 存款功能
+
+[PASS] test_tokenBankOwner() (gas: 23058)
+Logs:
+  测试 TokenBank 所有者
+
+[PASS] test_tokenBankWithdraw() (gas: 100192)
+Logs:
+  测试 TokenBank 取款功能
+
+[PASS] test_tokenBasicInfo() (gas: 28233)
+Logs:
+  测试 Token 基础信息
+
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.05ms (1.44ms CPU time)
+
+Ran 1 test suite in 606.83ms (2.05ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
+```
+
+## [1.1.0] - 2025-07-11
+
+### 新增功能
+- 编写 IBank 接口及BigBank 合约，使其满足 Bank 实现 IBank， BigBank 继承自 Bank 
+- 要求存款金额 >0.001 ether（用modifier权限控制）
+- BigBank 合约支持转移管理员
+- 编写一个 Admin 合约， Admin 合约有自己的 Owner ，同时有一个取款函数 adminWithdraw(IBank bank) , adminWithdraw 中会调用 IBank 接口的 withdraw 方法从而把 bank 合约内的资金转移到 Admin 合约地址。
+- BigBank 和 Admin 合约 部署后，把 BigBank 的管理员转移给 Admin 合约地址，模拟几个用户的存款，然后Admin 合约的Owner地址调用 adminWithdraw(IBank bank) 把 BigBank 的资金转移到 Admin 地址。
+
 ## [0.1.0] - 2025-07-08
 
 ### 新增功能
@@ -15,7 +188,7 @@
 
 ### 部署
 部署脚本
-```
+```Bash
 forge script script/bank.s.sol:DeployBank \
   --rpc-url $SEPOLIA_RPC \
   --private-key $NFT_PRIVATE_KEY \
@@ -26,7 +199,7 @@ forge script script/bank.s.sol:DeployBank \
 
 日志输出
 
-```                      
+```Bash                  
 (base) ➜  contract_bank git:(main) ✗ forge script script/bank.s.sol:DeployBank \
   --rpc-url $SEPOLIA_RPC \
   --private-key $NFT_PRIVATE_KEY \
@@ -138,173 +311,3 @@ Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/ba
 - 测试网部署成功:
 - 合约地址与scanUrl: [0x2feb07aa72860baf1951908cd20911a61b99309c#readContract](https://sepolia.etherscan.io/address/0x2feb07aa72860baf1951908cd20911a61b99309c#readContract)
 
-## [1.1.0] - 2025-07-11
-
-### 新增功能
-- 编写 IBank 接口及BigBank 合约，使其满足 Bank 实现 IBank， BigBank 继承自 Bank 
-- 要求存款金额 >0.001 ether（用modifier权限控制）
-- BigBank 合约支持转移管理员
-- 编写一个 Admin 合约， Admin 合约有自己的 Owner ，同时有一个取款函数 adminWithdraw(IBank bank) , adminWithdraw 中会调用 IBank 接口的 withdraw 方法从而把 bank 合约内的资金转移到 Admin 合约地址。
-- BigBank 和 Admin 合约 部署后，把 BigBank 的管理员转移给 Admin 合约地址，模拟几个用户的存款，然后Admin 合约的Owner地址调用 adminWithdraw(IBank bank) 把 BigBank 的资金转移到 Admin 地址。
-
-## [1.1.1] - 2025-07-14
-
-### 新增功能
-- 编写一个 token 合约 CTX
-- 编写一个 TokenBank 合约，可以将自己的 Token 存入到 TokenBank， 和从 TokenBank 取出
-- TokenBank 有两个方法：
-  - deposit() : 需要记录每个地址的存入数量；
-  - withdraw() : 用户可以提取自己的之前存入的 token。
-
-*通过存款与取款测试：* `forge test --match-path ./test/tokenBank.t.sol -vvv`
-```Bash
-➜  contract_bank git:(main) ✗ forge test --match-path ./test/tokenBank.t.sol -vvv
-[⠊] Compiling...
-[⠆] Compiling 1 files with Solc 0.8.20
-[⠰] Solc 0.8.20 finished in 1.25s
-Compiler run successful!
-
-Ran 5 tests for test/tokenBank.t.sol:TokenBankTest
-[PASS] test_tokenBalances() (gas: 36505)
-Logs:
-  测试 Token 余额分配
-
-[PASS] test_tokenBankDeposit() (gas: 92796)
-Logs:
-  测试 TokenBank 存款功能
-
-[PASS] test_tokenBankOwner() (gas: 23058)
-Logs:
-  测试 TokenBank 所有者
-
-[PASS] test_tokenBankWithdraw() (gas: 100192)
-Logs:
-  测试 TokenBank 取款功能
-
-[PASS] test_tokenBasicInfo() (gas: 28233)
-Logs:
-  测试 Token 基础信息
-
-Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.05ms (1.44ms CPU time)
-
-Ran 1 test suite in 606.83ms (2.05ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
-```
-
-## [1.1.2] - 2025-07-15
-### 新增功能
-
-- 扩展 ERC20 合约 ，添加一个有 hook 功能的转账函数，如函数名为：transferWithCallback ，在转账时，如果目标地址是合约地址的话，调用目标地址的 tokensReceived() 方法。
-
-- 继承 TokenBank 编写 TokenBankV2，支持存入扩展的 ERC20 Token，用户可以直接调用 transferWithCallback 将 扩展的 ERC20 Token 存入到 TokenBankV2 中。
-
-- 备注：TokenBankV2 需要实现 tokensReceived 来实现存款记录工作
-
-*通过存款与取款测试：* 
-```Bash
-➜  contract_bank git:(main) ✗ forge test --match-contract TokenBankV2Test -vv
-[⠊] Compiling...
-[⠢] Compiling 2 files with Solc 0.8.20
-[⠆] Solc 0.8.20 finished in 1.16s
-Compiler run successful!
-
-Ran 5 tests for test/tokenBankV2.t.sol:TokenBankV2Test
-[PASS] test_tokenBalances() (gas: 36505)
-Logs:
-  测试 Token 余额分配
-
-[PASS] test_tokenBankDeposit() (gas: 86593)
-Logs:
-  测试 TokenBank 存款功能(使用 transferWithCallback)
-
-[PASS] test_tokenBankOwner() (gas: 23080)
-Logs:
-  测试 TokenBank 所有者
-
-[PASS] test_tokenBankWithdraw() (gas: 100258)
-Logs:
-  测试 TokenBank 取款功能
-
-[PASS] test_tokenBasicInfo() (gas: 28233)
-Logs:
-  测试 Token 基础信息
-
-Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 2.06ms (1.21ms CPU time)
-
-Ran 1 test suite in 568.51ms (2.06ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
-➜  contract_bank git:(main) ✗ 
-```
-
-### 部署测试网并使用 Uniswap 交换
-
-```bash
-forge script script/deployToken.s.sol:DeployToken \
-  --rpc-url $SEPOLIA_RPC \
-  --private-key $NFT_PRIVATE_KEY \
-  --broadcast \
-  --verify \
-  -vvvv
-```
-
-```
-Submitted contract for verification:
-        Response: `OK`
-        GUID: `dfnjyq7mgi8rkxpspvmywds7drvjajafmexhkbghpqtrqrb4tq`
-        URL: https://sepolia.etherscan.io/address/0xad36abb13d0c25e809fae580662544d87b826d98
-Contract verification status:
-Response: `OK`
-Details: `Pass - Verified`
-Contract successfully verified
-All (1) contracts were verified!
-
-Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployToken.s.sol/11155111/run-latest.json
-
-Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployToken.s.sol/11155111/run-latest.json
-```
-
-## [2.0.0] - 2025-07-15
-### 新增功能
-
-- 编写一个简单的 NFTMarket 合约，使用自己发行的ERC20 扩展 Token 来买卖 NFT
-- NFTMarket 的函数有：
-  - `list()` : 实现上架功能，NFT 持有者可以设定一个价格（需要多少个 Token 购买该 NFT）并上架 NFT 到 NFTMarket，上架之后，其他人才可以购买
-
-  - `buyNFT()` : 普通的购买 NFT 功能，用户转入所定价的 token 数量，获得对应的 NFT
-
-  - 实现ERC20 扩展 Token 所要求的接收者方法 tokensReceived  ，在 tokensReceived 中实现NFT 购买功能(注意扩展的转账需要添加一个额外数据参数)
-
-### 部署并铸造NFT(1)
-
-```Bash
- forge script script/deployNft.s.sol:DeployNFT \
-  --rpc-url $SEPOLIA_RPC \
-  --private-key $NFT_PRIVATE_KEY \
-  --broadcast \
-  --verify \
-  -vvvv
-```
-*日志输出：*
-
-```Bash
-Submitting verification for [src/nft.sol:CarNFT] 0xd229E8AB85614BA1F98009615394fAc3528599BA.
-Submitted contract for verification:
-        Response: `OK`
-        GUID: `mbwciaijthg5tgmwcelkav4enffkgxbi2t78k7mzpvbncrtk2c`
-        URL: https://sepolia.etherscan.io/address/0xd229e8ab85614ba1f98009615394fac3528599ba
-Contract verification status:
-Response: `OK`
-Details: `Pass - Verified`
-Contract successfully verified
-All (1) contracts were verified!
-
-Transactions saved to: /Users/car/Work/2025beginAgain/contract_bank/broadcast/deployNft.s.sol/11155111/run-latest.json
-
-Sensitive values saved to: /Users/car/Work/2025beginAgain/contract_bank/cache/deployNft.s.sol/11155111/run-latest.json
-
-```
-
-*NFT地址*:
-`https://testnets.opensea.io/assets/sepolia/0xd229E8AB85614BA1F98009615394fAc3528599BA/1 `
-
-###  实现MarkerNFT合约
-
-已经通过测试

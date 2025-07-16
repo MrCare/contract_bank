@@ -1,7 +1,10 @@
 [profile.default]
 src = "src"
-out = "out"
+test = "test"              # 添加这一行
+out = "../../out"           # 输出到根目录
 libs = ["lib"]
+cache_path = "../../cache"  # 缓存到根目录
+broadcast = "../../broadcast"  # 广播到根目录
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 

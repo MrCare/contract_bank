@@ -1,0 +1,10 @@
+{
+    "name": "@contract-bank/contracts",
+    "version": "1.0.0",
+    "description": "智能合约",
+    "scripts": {
+        "build": "forge build",
+        "test": "forge test",
+        "deploy:sepolia": "forge script script/deployAll.s.sol --rpc-url $SEPOLIA_RPC --private-key $NFT_PRIVATE_KEY --broadcast --verify"
+    }
+}

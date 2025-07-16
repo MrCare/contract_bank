@@ -1,0 +1,23 @@
+{
+  "name": "contract_bank",
+  "version": "1.0.0",
+  "description": "智能合约银行系统",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:contracts\" \"pnpm dev:webapp\"",
+    "dev:contracts": "cd packages/contracts && forge test --watch",
+    "dev:webapp": "pnpm --filter webapp dev",
+    "build": "pnpm build:contracts && pnpm build:webapp",
+    "build:contracts": "cd packages/contracts && forge build && cd ../.. && node scripts/gen-types.js",
+    "build:webapp": "pnpm --filter webapp build",
+    "test": "cd packages/contracts && forge test",
+    "test:webapp": "pnpm --filter webapp test",
+    "deploy:contracts": "cd packages/contracts && forge script script/deployAll.s.sol --broadcast --verify",
+    "deploy:webapp": "pnpm --filter webapp deploy",
+    "generate:types": "node scripts/gen-types.js",
+    "clean": "cd packages/contracts && forge clean && cd ../.. && pnpm --filter webapp clean"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

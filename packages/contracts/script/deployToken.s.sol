@@ -6,13 +6,12 @@ import {MyToken} from "../src/token.sol";
 
 contract DeployToken is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("NFT_PRIVATE_KEY");
-        address deployer = vm.addr(deployerPrivateKey);
+        console.log("==========================================");
+        console.log("Deploying Token Contract");
+        console.log("==========================================");
         
-        console.log("Deployer address:", deployer);
-        console.log("Deployer balance:", deployer.balance);
-        
-        vm.startBroadcast(deployerPrivateKey);
+        // 使用 Foundry 钱包管理进行广播
+        vm.startBroadcast();
         
         // 部署代币
         MyToken token = new MyToken();
@@ -28,7 +27,6 @@ contract DeployToken is Script {
         console.log("Token symbol:", token.symbol());
         console.log("Token decimals:", token.decimals());
         console.log("Total supply:", token.totalSupply());
-        console.log("Deployer balance:", token.balanceOf(deployer));
         console.log("==========================================");
     }
 }

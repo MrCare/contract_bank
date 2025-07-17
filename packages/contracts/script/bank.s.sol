@@ -6,14 +6,21 @@ import {Bigbank} from "../src/bank.sol";
 
 contract DeployBank is Script {
     function run() public {
-        uint256 privateKey = vm.envUint("NFT_PRIVATE_KEY");
-        address deployer = vm.addr(privateKey);
-
-        // 检查并打印余额
-        console.log("Deployer Balance", deployer.balance);
-
-        vm.startBroadcast(privateKey);
-        new Bigbank();
+        console.log("==========================================");
+        console.log("Deploying Bank Contract");
+        console.log("==========================================");
+        
+        // 使用 Foundry 钱包管理进行广播
+        vm.startBroadcast();
+        
+        Bigbank bank = new Bigbank();
+        
         vm.stopBroadcast();
+        
+        console.log("==========================================");
+        console.log("Bank Contract deployed successfully!");
+        console.log("==========================================");
+        console.log("Contract address:", address(bank));
+        console.log("==========================================");
     }
 }

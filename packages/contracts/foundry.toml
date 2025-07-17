@@ -1,17 +1,33 @@
+# 默认配置，所有 profile 都会继承这些设置
 [profile.default]
 src = "src"
-test = "test"              # 添加这一行
-out = "../../out"           # 输出到根目录
+out = "../../out"
 libs = ["lib"]
-cache_path = "../../cache"  # 缓存到根目录
-broadcast = "../../broadcast"  # 广播到根目录
-
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
-
-# 指定本工程项目使用的 compiler 版本
+cache_path = "../../cache"  
+broadcast = "../../broadcast"  
 solc = "0.8.20" 
 
-# 添加依赖映射
+# 依赖映射
 remappings = [
     "@openzeppelin/=lib/openzeppelin-contracts/"
 ]
+
+# 本地开发环境
+[profile.local]
+
+# Sepolia 测试网环境
+[profile.sepolia]
+
+# 主网环境
+[profile.mainnet]
+
+# RPC 配置
+[rpc_endpoints]
+local = "http://127.0.0.1:8545"
+sepolia = "${SEPOLA_RPC}"
+mainnet = "${MAINNET_RPC}"
+
+# Etherscan 配置
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
+mainnet = { key = "${ETHERSCAN_API_KEY}" }

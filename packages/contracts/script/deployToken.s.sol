@@ -9,15 +9,15 @@ contract DeployToken is Script {
         console.log("==========================================");
         console.log("Deploying Token Contract");
         console.log("==========================================");
-        
+
         // 使用 Foundry 钱包管理进行广播
         vm.startBroadcast();
-        
+
         // 部署代币
         MyToken token = new MyToken();
-        
+
         vm.stopBroadcast();
-        
+
         // 输出部署信息
         console.log("==========================================");
         console.log("Token deployed successfully!");

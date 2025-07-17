@@ -22,13 +22,13 @@ contract TokenBankV2 is TokenBank, ITokenBankV2 {
         if (_data.length > 0) {
             emit DataReceived(from, amount, _data);
         }
-        
+
         // 增加用户在 TokenBank 中的余额
         balances[from] += amount;
-        
+
         // 触发事件
         emit TokensReceived(from, amount);
-        
+
         return true;
     }
 }

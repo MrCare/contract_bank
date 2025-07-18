@@ -4,6 +4,125 @@
 -->
 
 # Changelog
+## [1.0.4] - 2025-07-18
+### 给 nftMarket 添加模糊测试与不变量测试
+测试日志输出
+```bash
+(base) ➜  contracts git:(main) ✗ forge test --match-path test/nftMarket.t.sol -vvv
+[⠊] Compiling...
+[⠔] Compiling 1 files with Solc 0.8.20
+[⠒] Solc 0.8.20 finished in 1.49s
+Compiler run successful!
+
+Ran 12 tests for test/nftMarket.t.sol:NFTMarketTest
+[PASS] test_BuyNFT() (gas: 208974)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买NFT
+
+[PASS] test_DelistEvent() (gas: 128371)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试下架事件
+  要下架的 Listing ID: 1
+  要下架的 Token ID: 1
+
+[PASS] test_FuzzRandomBuyer(address,uint256) (runs: 259, μ: 225063, ~: 225072)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+[PASS] test_FuzzRandomPriceListing(uint256) (runs: 259, μ: 147226, ~: 147226)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+[PASS] test_InvariantMarketNeverHoldsTokens(uint256,uint256,uint256) (runs: 258, μ: 460766, ~: 460766)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+[PASS] test_ListEvent() (gas: 146349)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架事件
+  当前 nextListId: 0
+  期望的 listId: 1
+  上架后 nextListId: 1
+
+[PASS] test_ListNFT() (gas: 145537)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架NFT
+
+[PASS] test_RevertInsufficientPayment() (gas: 178455)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试支付不足
+
+[PASS] test_RevertInvalidPrice() (gas: 21332)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试无效价格
+
+[PASS] test_RevertNFTNotListed() (gas: 14720)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买未上架NFT
+
+[PASS] test_RevertNotOwner() (gas: 18608)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试非所有者上架
+
+[PASS] test_SoldEvent() (gas: 205924)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试售出事件
+  期望的 listId: 1
+  实际的 listId: 1
+  Token ID: 1
+  Price: 5000000000000000000
+  Seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496
+
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 166.32ms (310.96ms CPU time)
+
+Ran 1 test suite in 582.52ms (166.32ms CPU time): 12 tests passed, 0 failed, 0 skipped (12 total tests)
+```
+
 ## [1.0.3] - 2025-07-18
 ### 给 Bank 添加测试
 测试日志输出

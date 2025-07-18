@@ -1,0 +1,569 @@
+No files changed, compilation skipped
+
+Ran 12 tests for test/nftMarket.t.sol:NFTMarketTest
+[PASS] test_BuyNFT() (gas: 208974)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买NFT
+
+Traces:
+  [248774] NFTMarketTest::test_BuyNFT()
+    ├─ [0] console::log("测试购买NFT") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [2829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 20000000000000000000 [2e19]
+    ├─ [2829] MyToken::balanceOf(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf) [staticcall]
+    │   └─ ← [Return] 40000000000000000000 [4e19]
+    ├─ [0] VM::startPrank(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    │   └─ ← [Return]
+    ├─ [25298] MyToken::approve(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 5000000000000000000 [5e18])
+    │   ├─ emit Approval(owner: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, spender: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 5000000000000000000 [5e18])
+    │   └─ ← [Return] true
+    ├─ [57559] NFTMarket::buyNFT(1)
+    │   ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ [38834] CarNFT::transferFrom(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 1)
+    │   │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, tokenId: 1)
+    │   │   └─ ← [Stop]
+    │   ├─ [10519] MyToken::transferFrom(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 5000000000000000000 [5e18])
+    │   │   ├─ emit Transfer(from: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, to: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], value: 5000000000000000000 [5e18])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Sold(listId: 1, tokenId: 1, buyer: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, price: 5000000000000000000 [5e18])
+    │   └─ ← [Stop]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   └─ ← [Return] 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+    ├─ [0] VM::assertEq(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf) [staticcall]
+    │   └─ ← [Return]
+    ├─ [829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 25000000000000000000 [2.5e19]
+    ├─ [0] VM::assertEq(25000000000000000000 [2.5e19], 25000000000000000000 [2.5e19]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [829] MyToken::balanceOf(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf) [staticcall]
+    │   └─ ← [Return] 35000000000000000000 [3.5e19]
+    ├─ [0] VM::assertEq(35000000000000000000 [3.5e19], 35000000000000000000 [3.5e19]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [904] NFTMarket::isListed(1) [staticcall]
+    │   └─ ← [Return] false
+    ├─ [0] VM::assertFalse(false) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_DelistEvent() (gas: 128371)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试下架事件
+  要下架的 Listing ID: 1
+  要下架的 Token ID: 1
+
+Traces:
+  [148271] NFTMarketTest::test_DelistEvent()
+    ├─ [0] console::log("测试下架事件") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [821] NFTMarket::tokenToListId(1) [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [1924] NFTMarket::getListing(1) [staticcall]
+    │   └─ ← [Return] Listing({ tokenId: 1, price: 5000000000000000000 [5e18], seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, active: true })
+    ├─ [0] console::log("要下架的 Listing ID:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("要下架的 Token ID:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::expectEmit(true, true, false, false)
+    │   └─ ← [Return]
+    ├─ emit Delisted(listId: 1, tokenId: 1)
+    ├─ [3297] NFTMarket::delist(1)
+    │   ├─ emit Delisted(listId: 1, tokenId: 1)
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+[PASS] test_FuzzRandomBuyer(address,uint256) (runs: 259, μ: 225043, ~: 225075)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+Traces:
+  [286742] NFTMarketTest::test_FuzzRandomBuyer(0x9d0349283F27584d727f553934b6f59A4D3bbA8D, 136620772661107190 [1.366e17])
+    ├─ [0] console::log("测试随机地址购买") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] console::log("随机输入:", 136620772661107190 [1.366e17]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("计算的价格:", 146620772661107190 [1.466e17]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [2829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 20000000000000000000 [2e19]
+    ├─ [0] console::log("当前余额:", 20000000000000000000 [2e19]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 20000000000000000000 [2e19]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] console::log("随机买家:", 0x9d0349283F27584d727f553934b6f59A4D3bbA8D) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("随机价格:", 146620772661107190 [1.466e17]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [28528] MyToken::transfer(0x9d0349283F27584d727f553934b6f59A4D3bbA8D, 146620772661107190 [1.466e17])
+    │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, value: 146620772661107190 [1.466e17])
+    │   └─ ← [Return] true
+    ├─ [829] MyToken::balanceOf(0x9d0349283F27584d727f553934b6f59A4D3bbA8D) [staticcall]
+    │   └─ ← [Return] 146620772661107190 [1.466e17]
+    ├─ [0] console::log("转移后买家余额:", 146620772661107190 [1.466e17]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 146620772661107190 [1.466e17])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 146620772661107190 [1.466e17], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 19853379227338892810 [1.985e19]
+    ├─ [829] MyToken::balanceOf(0x9d0349283F27584d727f553934b6f59A4D3bbA8D) [staticcall]
+    │   └─ ← [Return] 146620772661107190 [1.466e17]
+    ├─ [0] VM::startPrank(0x9d0349283F27584d727f553934b6f59A4D3bbA8D)
+    │   └─ ← [Return]
+    ├─ [25298] MyToken::approve(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 146620772661107190 [1.466e17])
+    │   ├─ emit Approval(owner: 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, spender: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 146620772661107190 [1.466e17])
+    │   └─ ← [Return] true
+    ├─ [51959] NFTMarket::buyNFT(1)
+    │   ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ [38834] CarNFT::transferFrom(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, 1)
+    │   │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, tokenId: 1)
+    │   │   └─ ← [Stop]
+    │   ├─ [4919] MyToken::transferFrom(0x9d0349283F27584d727f553934b6f59A4D3bbA8D, NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 146620772661107190 [1.466e17])
+    │   │   ├─ emit Transfer(from: 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, to: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], value: 146620772661107190 [1.466e17])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Sold(listId: 1, tokenId: 1, buyer: 0x9d0349283F27584d727f553934b6f59A4D3bbA8D, price: 146620772661107190 [1.466e17])
+    │   └─ ← [Stop]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   └─ ← [Return] 0x9d0349283F27584d727f553934b6f59A4D3bbA8D
+    ├─ [0] VM::assertEq(0x9d0349283F27584d727f553934b6f59A4D3bbA8D, 0x9d0349283F27584d727f553934b6f59A4D3bbA8D) [staticcall]
+    │   └─ ← [Return]
+    ├─ [829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 20000000000000000000 [2e19]
+    ├─ [0] VM::assertEq(20000000000000000000 [2e19], 20000000000000000000 [2e19]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [829] MyToken::balanceOf(0x9d0349283F27584d727f553934b6f59A4D3bbA8D) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [904] NFTMarket::isListed(1) [staticcall]
+    │   └─ ← [Return] false
+    ├─ [0] VM::assertFalse(false) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_FuzzRandomPriceListing(uint256) (runs: 259, μ: 147226, ~: 147226)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+Traces:
+  [147226] NFTMarketTest::test_FuzzRandomPriceListing(4723)
+    ├─ [0] console::log("测试随机价格上架") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("随机价格:", 10000000000004723 [1e16]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 10000000000004723 [1e16])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 10000000000004723 [1e16], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [1924] NFTMarket::getListing(1) [staticcall]
+    │   └─ ← [Return] Listing({ tokenId: 1, price: 10000000000004723 [1e16], seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, active: true })
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(10000000000004723 [1e16], 10000000000004723 [1e16]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [1177] NFTMarket::isListed(1) [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_InvariantMarketNeverHoldsTokens(uint256,uint256,uint256) (runs: 258, μ: 460766, ~: 460766)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+Traces:
+  [560266] NFTMarketTest::test_InvariantMarketNeverHoldsTokens(23132 [2.313e4], 10082 [1.008e4], 3552)
+    ├─ [0] console::log("测试不可变性：市场合约永远不持有Token") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [2829] MyToken::balanceOf(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return] 20000000000000000000 [2e19]
+    ├─ [0] VM::assume(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] console::log("价格1:", 10000000000023132 [1e16]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("价格2:", 10000000000010082 [1e16]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("价格3:", 10000000000003552 [1e16]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("总需求:", 30000000000036766 [3e16]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("当前余额:", 20000000000000000000 [2e19]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [11428] MyToken::transfer(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 30000000000036766 [3e16])
+    │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, value: 30000000000036766 [3e16])
+    │   └─ ← [Return] true
+    ├─ [8628] MyToken::transfer(0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, 30000000000036766 [3e16])
+    │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, value: 30000000000036766 [3e16])
+    │   └─ ← [Return] true
+    ├─ [829] MyToken::balanceOf(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf) [staticcall]
+    │   └─ ← [Return] 40030000000000036766 [4.003e19]
+    ├─ [0] console::log("User1 余额:", 40030000000000036766 [4.003e19]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF) [staticcall]
+    │   └─ ← [Return] 40030000000000036766 [4.003e19]
+    ├─ [0] console::log("User2 余额:", 40030000000000036766 [4.003e19]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [2829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [123067] NFTMarket::list(1, 10000000000023132 [1e16])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 10000000000023132 [1e16], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "上架后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [96667] NFTMarket::list(2, 10000000000010082 [1e16])
+    │   ├─ [3094] CarNFT::ownerOf(2) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 2, tokenId: 2, price: 10000000000010082 [1e16], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "上架后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [96667] NFTMarket::list(3, 10000000000003552 [1e16])
+    │   ├─ [3094] CarNFT::ownerOf(3) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 3, tokenId: 3, price: 10000000000003552 [1e16], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "上架后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::startPrank(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    │   └─ ← [Return]
+    ├─ [25298] MyToken::approve(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 10000000000023132 [1e16])
+    │   ├─ emit Approval(owner: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, spender: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 10000000000023132 [1e16])
+    │   └─ ← [Return] true
+    ├─ [51959] NFTMarket::buyNFT(1)
+    │   ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ [38834] CarNFT::transferFrom(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 1)
+    │   │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, tokenId: 1)
+    │   │   └─ ← [Stop]
+    │   ├─ [4919] MyToken::transferFrom(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 10000000000023132 [1e16])
+    │   │   ├─ emit Transfer(from: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, to: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], value: 10000000000023132 [1e16])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Sold(listId: 1, tokenId: 1, buyer: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, price: 10000000000023132 [1e16])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "购买后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    ├─ [3297] NFTMarket::delist(2)
+    │   ├─ emit Delisted(listId: 2, tokenId: 2)
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "下架后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::startPrank(0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF)
+    │   └─ ← [Return]
+    ├─ [25298] MyToken::approve(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 10000000000003552 [1e16])
+    │   ├─ emit Approval(owner: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, spender: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 10000000000003552 [1e16])
+    │   └─ ← [Return] true
+    ├─ [45159] NFTMarket::buyNFT(3)
+    │   ├─ [1094] CarNFT::ownerOf(3) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ [32034] CarNFT::transferFrom(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, 3)
+    │   │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, tokenId: 3)
+    │   │   └─ ← [Stop]
+    │   ├─ [4919] MyToken::transferFrom(0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 10000000000003552 [1e16])
+    │   │   ├─ emit Transfer(from: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, to: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], value: 10000000000003552 [1e16])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Sold(listId: 3, tokenId: 3, buyer: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, price: 10000000000003552 [1e16])
+    │   └─ ← [Stop]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "购买后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    ├─ [829] MyToken::balanceOf(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a]) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0, "所有操作后市场合约不应持有Token") [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_ListEvent() (gas: 146349)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架事件
+  当前 nextListId: 0
+  期望的 listId: 1
+  上架后 nextListId: 1
+
+Traces:
+  [146349] NFTMarketTest::test_ListEvent()
+    ├─ [0] console::log("测试上架事件") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [2448] NFTMarket::nextListId() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [448] NFTMarket::nextListId() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] console::log("当前 nextListId:", 0) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("期望的 listId:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::expectEmit(true, true, false, true)
+    │   └─ ← [Return]
+    ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    ├─ [121067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [448] NFTMarket::nextListId() [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [0] console::log("上架后 nextListId:", 1) [staticcall]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+[PASS] test_ListNFT() (gas: 145537)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架NFT
+
+Traces:
+  [145537] NFTMarketTest::test_ListNFT()
+    ├─ [0] console::log("测试上架NFT") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [1924] NFTMarket::getListing(1) [staticcall]
+    │   └─ ← [Return] Listing({ tokenId: 1, price: 5000000000000000000 [5e18], seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, active: true })
+    ├─ [0] VM::assertEq(1, 1) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(5000000000000000000 [5e18], 5000000000000000000 [5e18]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertEq(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    ├─ [1177] NFTMarket::isListed(1) [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::assertTrue(true) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_RevertInsufficientPayment() (gas: 178455)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试支付不足
+
+Traces:
+  [178455] NFTMarketTest::test_RevertInsufficientPayment()
+    ├─ [0] console::log("测试支付不足") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [123067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [0] VM::startPrank(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [33256] MyToken::transferWithCallback(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 2500000000000000000 [2.5e18], 0x0000000000000000000000000000000000000000000000000000000000000001)
+    │   ├─ emit Transfer(from: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, to: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 2500000000000000000 [2.5e18])
+    │   ├─ [1726] NFTMarket::tokensReceived(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 2500000000000000000 [2.5e18], 0x0000000000000000000000000000000000000000000000000000000000000001)
+    │   │   └─ ← [Revert] InsufficientPayment()
+    │   └─ ← [Revert] CallbackFailed()
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+[PASS] test_RevertInvalidPrice() (gas: 21332)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试无效价格
+
+Traces:
+  [21332] NFTMarketTest::test_RevertInvalidPrice()
+    ├─ [0] console::log("测试无效价格") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::expectRevert(custom error 0xc31eb0e0: 00bfc92100000000000000000000000000000000000000000000000000000000)
+    │   └─ ← [Return]
+    ├─ [9247] NFTMarket::list(1, 0)
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   └─ ← [Revert] InvalidPrice()
+    └─ ← [Stop]
+
+[PASS] test_RevertNFTNotListed() (gas: 14720)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买未上架NFT
+
+Traces:
+  [14720] NFTMarketTest::test_RevertNFTNotListed()
+    ├─ [0] console::log("测试购买未上架NFT") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::expectRevert(custom error 0xc31eb0e0: d4;)
+    │   └─ ← [Return]
+    ├─ [2797] NFTMarket::buyNFT(999)
+    │   └─ ← [Revert] NFTNotListed()
+    └─ ← [Stop]
+
+[PASS] test_RevertNotOwner() (gas: 18608)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试非所有者上架
+
+Traces:
+  [18608] NFTMarketTest::test_RevertNotOwner()
+    ├─ [0] console::log("测试非所有者上架") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf28dceb3: 00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000024118cdaa70000000000000000000000007e5f4552091a69125d5dfcb7b8c2659029395bdf00000000000000000000000000000000000000000000000000000000)
+    │   └─ ← [Return]
+    ├─ [3134] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   └─ ← [Revert] OwnableUnauthorizedAccount(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    └─ ← [Stop]
+
+[PASS] test_SoldEvent() (gas: 205924)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试售出事件
+  期望的 listId: 1
+  实际的 listId: 1
+  Token ID: 1
+  Price: 5000000000000000000
+  Seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496
+
+Traces:
+  [245724] NFTMarketTest::test_SoldEvent()
+    ├─ [0] console::log("测试售出事件") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [2448] NFTMarket::nextListId() [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [121067] NFTMarket::list(1, 5000000000000000000 [5e18])
+    │   ├─ [3094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ emit Listed(listId: 1, tokenId: 1, price: 5000000000000000000 [5e18], seller: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Stop]
+    ├─ [821] NFTMarket::tokenToListId(1) [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [1924] NFTMarket::getListing(1) [staticcall]
+    │   └─ ← [Return] Listing({ tokenId: 1, price: 5000000000000000000 [5e18], seller: 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, active: true })
+    ├─ [0] console::log("期望的 listId:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("实际的 listId:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Token ID:", 1) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Price:", 5000000000000000000 [5e18]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] console::log("Seller:", NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::startPrank(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf)
+    │   └─ ← [Return]
+    ├─ [25298] MyToken::approve(NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], 5000000000000000000 [5e18])
+    │   ├─ emit Approval(owner: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, spender: NFTMarket: [0xF62849F9A0B5Bf2913b396098F7c7019b51A820a], value: 5000000000000000000 [5e18])
+    │   └─ ← [Return] true
+    ├─ [0] VM::expectEmit(true, true, true, true)
+    │   └─ ← [Return]
+    ├─ emit Sold(listId: 1, tokenId: 1, buyer: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, price: 5000000000000000000 [5e18])
+    ├─ [61559] NFTMarket::buyNFT(1)
+    │   ├─ [1094] CarNFT::ownerOf(1) [staticcall]
+    │   │   └─ ← [Return] NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496]
+    │   ├─ [38834] CarNFT::transferFrom(NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, 1)
+    │   │   ├─ emit Transfer(from: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], to: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, tokenId: 1)
+    │   │   └─ ← [Stop]
+    │   ├─ [14519] MyToken::transferFrom(0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 5000000000000000000 [5e18])
+    │   │   ├─ emit Transfer(from: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, to: NFTMarketTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], value: 5000000000000000000 [5e18])
+    │   │   └─ ← [Return] true
+    │   ├─ emit Sold(listId: 1, tokenId: 1, buyer: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf, price: 5000000000000000000 [5e18])
+    │   └─ ← [Stop]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 153.96ms (279.80ms CPU time)
+
+Ran 1 test suite in 599.08ms (153.96ms CPU time): 12 tests passed, 0 failed, 0 skipped (12 total tests)

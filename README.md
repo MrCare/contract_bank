@@ -4,6 +4,57 @@
 -->
 
 # Changelog
+## [1.0.3] - 2025-07-18
+### 给 Bank 添加测试
+测试日志输出
+```bash
+(base) ➜  contracts git:(main) ✗ forge test --match-path test/bank.t.sol -vvv
+[⠊] Compiling...
+[⠢] Compiling 1 files with Solc 0.8.20
+[⠆] Solc 0.8.20 finished in 1.20s
+Compiler run successful!
+
+Ran 6 tests for test/bank.t.sol:BankTest
+[PASS] test_admin() (gas: 16921)
+Logs:
+  admin() -> 检查合约管理员地址是否为部署合约的地址
+
+[PASS] test_cantSetAdmin() (gas: 18082)
+Logs:
+  setAdmin() -> 检查非管理员是否能够调用setAdmin()
+
+[PASS] test_deposit() (gas: 86032)
+Logs:
+  deposit() -> 1. 断言检查存款前后用户在 Bank 合约中的存款额更新是否正确
+
+[PASS] test_setAdmin() (gas: 24205)
+Logs:
+  setAdmin() -> 检查是否能够重新设置管理员账户为addrA
+
+[PASS] test_topThree() (gas: 258069)
+Logs:
+  topThree() -> 2. 检查存款金额的前 3 名用户是否正确，分别检查有1个、2个、3个、4 个用户， 以及同一个用户多次存款的情况
+
+[PASS] test_withdraw() (gas: 182224)
+Logs:
+  withdraw() -> 3. 检查只有管理员能够取钱，非管理员无法取钱
+  合约总余额: 3000000000000000000
+  测试非管理员 addrA 无法取钱
+  测试非管理员 addrB 无法取钱
+  测试管理员可以取钱
+  管理员取钱前余额: 79228162514264337593543950335
+  管理员取钱后余额: 79228162515764337593543950335
+  合约取钱后余额: 1500000000000000000
+  测试取款金额超过合约余额
+  测试管理员可以取出所有余额
+  取出所有余额后合约余额: 0
+
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 2.89ms (4.68ms CPU time)
+
+Ran 1 test suite in 590.06ms (2.89ms CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)
+```
+
+
 ## [2.0.0] - 2025-07-15
 
 完成一个极简的Dapp界面，增加钱包连接与和tokenBank的极简交互

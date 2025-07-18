@@ -23,7 +23,7 @@ packages/webapp/src/contracts/
 !.env.example
 
 # 系统文件
-.DS_Store
+**/*.DS_Store
 .vscode/
 .idea/
 

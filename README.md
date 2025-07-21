@@ -2,6 +2,10 @@
  * @Author: Mr.Car
  * @Date: 2025-07-10 08:52:43
 -->
+## [2.0.0] - 2025-07-15
+
+完成一个极简的Dapp界面，增加钱包连接与和tokenBank的极简交互
+![第一版界面截图](./bankFrontEndV1.jpg)
 
 # Changelog
 ## [1.0.4] - 2025-07-18
@@ -173,11 +177,6 @@ Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 2.89ms (4.68ms CPU 
 Ran 1 test suite in 590.06ms (2.89ms CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)
 ```
 
-
-## [2.0.0] - 2025-07-15
-
-完成一个极简的Dapp界面，增加钱包连接与和tokenBank的极简交互
-![第一版界面截图](./frontEndv1.png)
 
 ## [2.0.0] - 2025-07-15
 ### 新增功能

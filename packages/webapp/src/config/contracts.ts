@@ -10,8 +10,8 @@ export const CHAIN_CONFIG = {
     id: 11155111,
     name: 'Sepolia',
     contracts: {
-      token: '0x0000000000000000000000000000000000000000', // 请替换
-      tokenBank: '0x0000000000000000000000000000000000000000', // 请替换
+      token: '0xf5115a4d861c51183fbd90bbdfa5086c3af3d22a', // 请替换
+      tokenBank: '0x7a72f9927080db4ae849f352a6f7d0ce7bf8cf42', // 请替换
     },
   },
   mainnet: {

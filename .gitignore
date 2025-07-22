@@ -15,10 +15,12 @@ node_modules/
 packages/webapp/.next/
 packages/webapp/out/
 
-# 自动生成的文件
-!packages/webapp/src/contracts/tokenBank.ts
-!packages/webapp/src/contracts/ERC20.ts
-packages/webapp/src/contracts/
+
+# packages/webapp/src/contracts/
+# # 自动生成的文件
+# !packages/webapp/src/contracts/tokenBank.ts
+# !packages/webapp/src/contracts/ERC20.ts
+
 
 # 环境变量
 .env*

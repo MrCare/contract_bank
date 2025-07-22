@@ -24,7 +24,7 @@ remappings = [
 # RPC 配置
 [rpc_endpoints]
 local = "http://127.0.0.1:8545"
-sepolia = "${SEPOLA_RPC}"
+sepolia = "${SEPOLIA_RPC}"
 mainnet = "${MAINNET_RPC}"
 
 # Etherscan 配置

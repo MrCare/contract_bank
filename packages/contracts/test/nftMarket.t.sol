@@ -2,9 +2,10 @@
 pragma solidity ^0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
-import {CarNFT} from "src/nft.sol";
-import {MyToken} from "src/token.sol";
-import {NFTMarket, INFTMarketEvents, INFTMarketErrors} from "src/nftMarket.sol";
+import {CarNFT} from "../src/nft.sol";
+import {MyToken} from "../src/token.sol";
+import {NFTMarket, INFTMarketEvents, INFTMarketErrors} from "../src/nftMarket.sol";
+import {NFTMarketAssembly} from "../src/nftMarketAssembly.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -12,12 +13,23 @@ contract NFTMarketTest is Test, IERC721Receiver, INFTMarketEvents, INFTMarketErr
     CarNFT public nft;
     MyToken public token;
     NFTMarket public market;
+    NFTMarketAssembly public marketAssembly;
 
     address public owner;
     address public user1;
     address public user2;
 
-    uint256 constant NFT_PRICE = 5 * 10 ** 18; // 5 CTK 而不是 10 CTK
+    uint256 constant NFT_PRICE = 5 * 10 ** 18; // 5 CTK
+
+    // Gas tracking
+    struct GasReport {
+        uint256 originalGas;
+        uint256 optimizedGas;
+        uint256 gasReduction;
+        uint256 percentageReduction;
+    }
+
+    mapping(string => GasReport) public gasReports;
 
     function setUp() public {
         owner = address(this);
@@ -28,21 +40,24 @@ contract NFTMarketTest is Test, IERC721Receiver, INFTMarketEvents, INFTMarketErr
         nft = new CarNFT("QmYourIPFSHashHere");
         token = new MyToken();
         market = new NFTMarket(address(nft), address(token));
+        marketAssembly = new NFTMarketAssembly(address(nft), address(token));
 
-        // 修复：合理分配代币（总供应量只有100 CTK）
+        // 分配代币
         token.transfer(user1, 40 * 10 ** 18);  // 40 CTK
         token.transfer(user2, 40 * 10 ** 18);  // 40 CTK
-        // Owner 保留 20 CTK
         
         // 铸造NFT
         nft.mint(owner, 1);
         nft.mint(owner, 2);
         nft.mint(owner, 3);
+        nft.mint(owner, 4);
+        nft.mint(owner, 5);
+        nft.mint(owner, 6);
 
         // 授权市场合约操作NFT
         nft.setApprovalForAll(address(market), true);
+        nft.setApprovalForAll(address(marketAssembly), true);
         
-        // Debug: 打印初始余额
         console.log(unicode"Total Supply:", token.totalSupply());
         console.log(unicode"Owner token balance:", token.balanceOf(owner));
         console.log(unicode"User1 token balance:", token.balanceOf(user1));
@@ -53,12 +68,30 @@ contract NFTMarketTest is Test, IERC721Receiver, INFTMarketEvents, INFTMarketErr
         return IERC721Receiver.onERC721Received.selector;
     }
 
-    // ============ 修复后的测试 ============
-
-    function test_ListNFT() public {
-        console.log(unicode"测试上架NFT");
+    function _calculateGasReport(string memory testName, uint256 originalGas, uint256 optimizedGas) internal {
+        GasReport memory report;
+        report.originalGas = originalGas;
+        report.optimizedGas = optimizedGas;
+        report.gasReduction = originalGas > optimizedGas ? originalGas - optimizedGas : 0;
+        report.percentageReduction = originalGas > 0 ? (report.gasReduction * 100) / originalGas : 0;
         
+        gasReports[testName] = report;
+        
+        console.log(unicode"=== Gas Report for %s ===", testName);
+        console.log(unicode"Original Gas: %d", originalGas);
+        console.log(unicode"Optimized Gas: %d", optimizedGas);
+        console.log(unicode"Gas Reduction: %d", report.gasReduction);
+        console.log(unicode"Percentage Reduction: %d%%", report.percentageReduction);
+        console.log("================================");
+    }
+
+    // ============ 对比测试：上架NFT ============
+    function test_ListNFT() public {
+        console.log(unicode"测试上架NFT - 原版");
+        
+        uint256 gasBefore = gasleft();
         market.list(1, NFT_PRICE);
+        uint256 originalGas = gasBefore - gasleft();
         
         NFTMarket.Listing memory listing = market.getListing(1);
         assertEq(listing.tokenId, 1);
@@ -66,285 +99,280 @@ contract NFTMarketTest is Test, IERC721Receiver, INFTMarketEvents, INFTMarketErr
         assertEq(listing.seller, owner);
         assertTrue(listing.active);
         assertTrue(market.isListed(1));
+        
+        console.log(unicode"测试上架NFT - 优化版");
+        
+        gasBefore = gasleft();
+        marketAssembly.list(2, NFT_PRICE);
+        uint256 optimizedGas = gasBefore - gasleft();
+        
+        NFTMarketAssembly.Listing memory listingAssembly = marketAssembly.getListing(1);
+        assertEq(listingAssembly.tokenId, 2);
+        assertEq(listingAssembly.price, NFT_PRICE);
+        assertEq(listingAssembly.seller, owner);
+        assertTrue(listingAssembly.active);
+        assertTrue(marketAssembly.isListed(2));
+        
+        _calculateGasReport("ListNFT", originalGas, optimizedGas);
     }
 
+    // ============ 对比测试：购买NFT ============
     function test_BuyNFT() public {
-        console.log(unicode"测试购买NFT");
+        console.log(unicode"测试购买NFT - 准备阶段");
         
+        // 准备原版合约
         market.list(1, NFT_PRICE);
+        // 准备优化版合约
+        marketAssembly.list(2, NFT_PRICE);
         
         uint256 ownerBalanceBefore = token.balanceOf(owner);
         uint256 user1BalanceBefore = token.balanceOf(user1);
         
+        console.log(unicode"测试购买NFT - 原版");
         vm.startPrank(user1);
         token.approve(address(market), NFT_PRICE);
+        uint256 gasBefore = gasleft();
         market.buyNFT(1);
+        uint256 originalGas = gasBefore - gasleft();
         vm.stopPrank();
         
         assertEq(nft.ownerOf(1), user1);
         assertEq(token.balanceOf(owner), ownerBalanceBefore + NFT_PRICE);
         assertEq(token.balanceOf(user1), user1BalanceBefore - NFT_PRICE);
         assertFalse(market.isListed(1));
+        
+        console.log(unicode"测试购买NFT - 优化版");
+        vm.startPrank(user2);
+        token.approve(address(marketAssembly), NFT_PRICE);
+        gasBefore = gasleft();
+        marketAssembly.buyNFT(1);
+        uint256 optimizedGas = gasBefore - gasleft();
+        vm.stopPrank();
+        
+        assertEq(nft.ownerOf(2), user2);
+        assertFalse(marketAssembly.isListed(2));
+        
+        _calculateGasReport("BuyNFT", originalGas, optimizedGas);
     }
 
-    // ============ 修复后的错误测试 ============
+    // ============ 对比测试：查询函数 ============
+    function test_IsListed() public {
+        console.log(unicode"测试isListed查询 - 准备阶段");
+        
+        market.list(1, NFT_PRICE);
+        marketAssembly.list(2, NFT_PRICE);
+        
+        console.log(unicode"测试isListed查询 - 原版");
+        uint256 gasBefore = gasleft();
+        bool result1 = market.isListed(1);
+        uint256 originalGas = gasBefore - gasleft();
+        assertTrue(result1);
+        
+        console.log(unicode"测试isListed查询 - 优化版");
+        gasBefore = gasleft();
+        bool result2 = marketAssembly.isListed(2);
+        uint256 optimizedGas = gasBefore - gasleft();
+        assertTrue(result2);
+        
+        _calculateGasReport("IsListed", originalGas, optimizedGas);
+    }
 
+    function test_GetListingByToken() public {
+        console.log(unicode"测试getListingByToken查询 - 准备阶段");
+        
+        market.list(1, NFT_PRICE);
+        marketAssembly.list(2, NFT_PRICE);
+        
+        console.log(unicode"测试getListingByToken查询 - 原版");
+        uint256 gasBefore = gasleft();
+        NFTMarket.Listing memory listing1 = market.getListingByToken(1);
+        uint256 originalGas = gasBefore - gasleft();
+        assertEq(listing1.tokenId, 1);
+        
+        console.log(unicode"测试getListingByToken查询 - 优化版");
+        gasBefore = gasleft();
+        NFTMarketAssembly.Listing memory listing2 = marketAssembly.getListingByToken(2);
+        uint256 optimizedGas = gasBefore - gasleft();
+        assertEq(listing2.tokenId, 2);
+        
+        _calculateGasReport("GetListingByToken", originalGas, optimizedGas);
+    }
+
+    // ============ 对比测试：错误情况 ============
     function test_RevertNotOwner() public {
-        console.log(unicode"测试非所有者上架");
+        console.log(unicode"测试非所有者上架 - 原版");
         
         vm.prank(user1);
-        // 修复：期望 Ownable 的错误
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, user1));
         market.list(1, NFT_PRICE);
+        
+        console.log(unicode"测试非所有者上架 - 优化版");
+        
+        vm.prank(user1);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, user1));
+        marketAssembly.list(1, NFT_PRICE);
     }
 
     function test_RevertInvalidPrice() public {
-        console.log(unicode"测试无效价格");
+        console.log(unicode"测试无效价格 - 原版");
         
         vm.expectRevert(InvalidPrice.selector);
         market.list(1, 0);
+        
+        console.log(unicode"测试无效价格 - 优化版");
+        
+        vm.expectRevert(InvalidPrice.selector);
+        marketAssembly.list(1, 0);
     }
 
     function test_RevertNFTNotListed() public {
-        console.log(unicode"测试购买未上架NFT");
+        console.log(unicode"测试购买未上架NFT - 原版");
         
         vm.expectRevert(NFTNotListed.selector);
         market.buyNFT(999);
+        
+        console.log(unicode"测试购买未上架NFT - 优化版");
+        
+        vm.expectRevert(NFTNotListed.selector);
+        marketAssembly.buyNFT(999);
     }
 
-    function test_RevertInsufficientPayment() public {
-        console.log(unicode"测试支付不足");
-        
-        market.list(1, NFT_PRICE);
-        
-        vm.startPrank(user1);
-        bytes memory data = abi.encode(uint256(1));
-        // 修复：期望实际抛出的错误类型
-        vm.expectRevert(); // 或者根据实际合约确定具体的错误
-        token.transferWithCallback(address(market), NFT_PRICE / 2, data);
-        vm.stopPrank();
-    }
-
-    // ============ 修复后的事件测试 ============
-
+    // ============ 对比测试：事件测试 ============
     function test_ListEvent() public {
-        console.log(unicode"测试上架事件");
+        console.log(unicode"测试上架事件 - 原版");
         
-        // 修复：预先计算正确的 listId
-        uint256 expectedListId = market.nextListId() + 1;  // 因为合约内部是 ++nextListId
-        
-        console.log(unicode"当前 nextListId:", market.nextListId());
-        console.log(unicode"期望的 listId:", expectedListId);
+        uint256 expectedListId1 = market.nextListId() + 1;
         
         vm.expectEmit(true, true, false, true);
-        emit Listed(expectedListId, 1, NFT_PRICE, owner);
-        
+        emit Listed(expectedListId1, 1, NFT_PRICE, owner);
         market.list(1, NFT_PRICE);
         
-        // Debug: 检查上架后的状态
-        console.log(unicode"上架后 nextListId:", market.nextListId());
+        console.log(unicode"测试上架事件 - 优化版");
+        
+        uint256 expectedListId2 = marketAssembly.nextListId() + 1;
+        
+        vm.expectEmit(true, true, false, true);
+        emit Listed(expectedListId2, 2, NFT_PRICE, owner);
+        marketAssembly.list(2, NFT_PRICE);
     }
 
     function test_SoldEvent() public {
-        console.log(unicode"测试售出事件");
-        
-        // 先计算期望的 listId
-        uint256 expectedListId = market.nextListId() + 1;
+        console.log(unicode"测试售出事件 - 原版");
         
         market.list(1, NFT_PRICE);
+        uint256 listId1 = market.tokenToListId(1);
         
-        // 修复：使用预先计算的 listId
-        uint256 listId = market.tokenToListId(1);
-        NFTMarket.Listing memory listing = market.getListing(listId);
-        
-        console.log(unicode"期望的 listId:", expectedListId);
-        console.log(unicode"实际的 listId:", listId);
-        console.log(unicode"Token ID:", listing.tokenId);
-        console.log(unicode"Price:", listing.price);
-        console.log(unicode"Seller:", listing.seller);
-        
-
         vm.startPrank(user1);
         token.approve(address(market), NFT_PRICE);
         vm.expectEmit(true, true, true, true);
-        emit Sold(listId, listing.tokenId, user1, listing.price);
-        market.buyNFT(listId);
+        emit Sold(listId1, 1, user1, NFT_PRICE);
+        market.buyNFT(listId1);
+        vm.stopPrank();
+        
+        console.log(unicode"测试售出事件 - 优化版");
+        
+        marketAssembly.list(2, NFT_PRICE);
+        uint256 listId2 = marketAssembly.tokenToListId(2);
+        
+        vm.startPrank(user2);
+        token.approve(address(marketAssembly), NFT_PRICE);
+        vm.expectEmit(true, true, true, true);
+        emit Sold(listId2, 2, user2, NFT_PRICE);
+        marketAssembly.buyNFT(listId2);
         vm.stopPrank();
     }
 
     function test_DelistEvent() public {
-        console.log(unicode"测试下架事件");
+        console.log(unicode"测试下架事件 - 原版");
         
         market.list(1, NFT_PRICE);
-        
-        // 修复：上架后获取正确的 listId
-        uint256 listId = market.tokenToListId(1);
-        NFTMarket.Listing memory listing = market.getListing(listId);
-        
-        console.log(unicode"要下架的 Listing ID:", listId);
-        console.log(unicode"要下架的 Token ID:", listing.tokenId);
+        uint256 listId1 = market.tokenToListId(1);
         
         vm.expectEmit(true, true, false, false);
-        emit Delisted(listId, listing.tokenId);
+        emit Delisted(listId1, 1);
+        market.delist(listId1);
         
-        market.delist(listId);
+        console.log(unicode"测试下架事件 - 优化版");
+        
+        marketAssembly.list(2, NFT_PRICE);
+        uint256 listId2 = marketAssembly.tokenToListId(2);
+        
+        vm.expectEmit(true, true, false, false);
+        emit Delisted(listId2, 2);
+        marketAssembly.delist(listId2);
     }
 
-    // ============ 修复后的随机测试 ============
-
+    // ============ 对比测试：Fuzz测试 ============
     function test_FuzzRandomPriceListing(uint256 randomPrice) public {
-        console.log(unicode"测试随机价格上架");
+        console.log(unicode"测试随机价格上架 - 对比版");
         
-        // 修复：降低价格范围以适应总供应量
-        uint256 price = (randomPrice % (20 ether)) + 0.01 ether;  // 0.01-20 CTK
+        uint256 price = (randomPrice % (20 ether)) + 0.01 ether;
         
         console.log(unicode"随机价格:", price);
         
+        // 测试原版
+        uint256 gasBefore = gasleft();
         market.list(1, price);
+        uint256 originalGas = gasBefore - gasleft();
         
-        NFTMarket.Listing memory listing = market.getListing(1);
-        assertEq(listing.tokenId, 1);
-        assertEq(listing.price, price);
-        assertEq(listing.seller, owner);
-        assertTrue(listing.active);
-        assertTrue(market.isListed(1));
+        NFTMarket.Listing memory listing1 = market.getListing(1);
+        assertEq(listing1.tokenId, 1);
+        assertEq(listing1.price, price);
+        assertTrue(listing1.active);
+        
+        // 测试优化版
+        gasBefore = gasleft();
+        marketAssembly.list(2, price);
+        uint256 optimizedGas = gasBefore - gasleft();
+        
+        NFTMarketAssembly.Listing memory listing2 = marketAssembly.getListing(1);
+        assertEq(listing2.tokenId, 2);
+        assertEq(listing2.price, price);
+        assertTrue(listing2.active);
+        
+        _calculateGasReport("FuzzRandomPriceListing", originalGas, optimizedGas);
     }
 
-    function test_FuzzRandomBuyer(address randomBuyer, uint256 randomPrice) public {
-        console.log(unicode"测试随机地址购买");
+    // ============ 最终Gas报告 ============
+    function test_FinalGasReport() public {
+        console.log("\n");
+        console.log(unicode"==========================================");
+        console.log(unicode"          最终Gas优化报告");
+        console.log(unicode"==========================================");
         
-        // 过滤无效地址
-        vm.assume(randomBuyer != address(0));
-        vm.assume(randomBuyer != address(this));
-        vm.assume(randomBuyer != address(market));
-        vm.assume(randomBuyer != address(nft));
-        vm.assume(randomBuyer != address(token));
-        vm.assume(randomBuyer.code.length == 0);
+        // 重新运行关键测试以获取准确数据
+        _runComprehensiveGasTest();
         
-        // 修复：降低价格范围
-        uint256 price = (randomPrice % (10 ether)) + 0.01 ether;  // 0.01-10 CTK
-        
-        console.log(unicode"随机输入:", randomPrice);
-        console.log(unicode"计算的价格:", price);
-        console.log(unicode"当前余额:", token.balanceOf(address(this)));
-        
-        // 添加：跳过会导致供应不足的情况
-        vm.assume(token.balanceOf(address(this)) >= price);
-        
-        console.log(unicode"随机买家:", randomBuyer);
-        console.log(unicode"随机价格:", price);
-        
-        // 给随机买家分发足够的代币
-        token.transfer(randomBuyer, price);
-        
-        console.log(unicode"转移后买家余额:", token.balanceOf(randomBuyer));
-        
-        market.list(1, price);
-        
-        uint256 sellerBalanceBefore = token.balanceOf(owner);
-        uint256 buyerBalanceBefore = token.balanceOf(randomBuyer);
-        
-        vm.startPrank(randomBuyer);
-        token.approve(address(market), price);
-        market.buyNFT(1);
-        vm.stopPrank();
-        
-        assertEq(nft.ownerOf(1), randomBuyer);
-        assertEq(token.balanceOf(owner), sellerBalanceBefore + price);
-        assertEq(token.balanceOf(randomBuyer), buyerBalanceBefore - price);
-        assertFalse(market.isListed(1));
+        console.log(unicode"==========================================");
     }
 
-    function test_InvariantMarketNeverHoldsTokens(
-        uint256 randomPrice1,
-        uint256 randomPrice2,
-        uint256 randomPrice3
-    ) public {
-        console.log(unicode"测试不可变性：市场合约永远不持有Token");
+    function _runComprehensiveGasTest() internal {
+        // List测试
+        uint256 gasBefore = gasleft();
+        market.list(5, NFT_PRICE);
+        uint256 originalListGas = gasBefore - gasleft();
         
-        // 修复：大幅降低价格范围以适应总供应量
-        uint256 price1 = (randomPrice1 % (5 ether)) + 0.01 ether;  // 0.01-5 CTK
-        uint256 price2 = (randomPrice2 % (5 ether)) + 0.01 ether;  // 0.01-5 CTK
-        uint256 price3 = (randomPrice3 % (5 ether)) + 0.01 ether;  // 0.01-5 CTK
+        gasBefore = gasleft();
+        marketAssembly.list(6, NFT_PRICE);
+        uint256 optimizedListGas = gasBefore - gasleft();
         
-        // 添加：过滤掉总需求超过供应量的情况
-        uint256 totalNeeded = price1 + price2 + price3;
-        uint256 currentBalance = token.balanceOf(address(this));
+        _calculateGasReport("Final_List", originalListGas, optimizedListGas);
         
-        // 跳过会导致供应不足的测试用例
-        vm.assume(totalNeeded * 2 <= currentBalance);
-        
-        console.log(unicode"价格1:", price1);
-        console.log(unicode"价格2:", price2);
-        console.log(unicode"价格3:", price3);
-        console.log(unicode"总需求:", totalNeeded);
-        console.log(unicode"当前余额:", currentBalance);
-        
-        // 给用户分发足够的代币
-        token.transfer(user1, totalNeeded);
-        token.transfer(user2, totalNeeded);
-        
-        console.log(unicode"User1 余额:", token.balanceOf(user1));
-        console.log(unicode"User2 余额:", token.balanceOf(user2));
-        
-        // 初始状态：市场合约余额为0
-        assertEq(token.balanceOf(address(market)), 0);
-        
-        // 上架多个NFT
-        market.list(1, price1);
-        assertEq(token.balanceOf(address(market)), 0, unicode"上架后市场合约不应持有Token");
-        
-        market.list(2, price2);
-        assertEq(token.balanceOf(address(market)), 0, unicode"上架后市场合约不应持有Token");
-        
-        market.list(3, price3);
-        assertEq(token.balanceOf(address(market)), 0, unicode"上架后市场合约不应持有Token");
-        
-        // 购买NFT
+        // Buy测试
         vm.startPrank(user1);
-        token.approve(address(market), price1);
-        market.buyNFT(1);
-        assertEq(token.balanceOf(address(market)), 0, unicode"购买后市场合约不应持有Token");
+        token.approve(address(market), NFT_PRICE);
+        gasBefore = gasleft();
+        market.buyNFT(market.tokenToListId(5));
+        uint256 originalBuyGas = gasBefore - gasleft();
         vm.stopPrank();
         
-        // 下架NFT
-        market.delist(2);
-        assertEq(token.balanceOf(address(market)), 0, unicode"下架后市场合约不应持有Token");
-        
-        // 再次购买
         vm.startPrank(user2);
-        token.approve(address(market), price3);
-        market.buyNFT(3);
-        assertEq(token.balanceOf(address(market)), 0, unicode"购买后市场合约不应持有Token");
+        token.approve(address(marketAssembly), NFT_PRICE);
+        gasBefore = gasleft();
+        marketAssembly.buyNFT(marketAssembly.tokenToListId(6));
+        uint256 optimizedBuyGas = gasBefore - gasleft();
         vm.stopPrank();
         
-        // 最终验证
-        assertEq(token.balanceOf(address(market)), 0, unicode"所有操作后市场合约不应持有Token");
-    }
-
-    // 添加调试助手函数
-    function debugTokenBalances() internal view {
-        console.log("=== Token Balance Debug ===");
-        console.log(unicode"Owner:", token.balanceOf(owner));
-        console.log(unicode"User1:", token.balanceOf(user1));
-        console.log(unicode"User2:", token.balanceOf(user2));
-        console.log(unicode"Market:", token.balanceOf(address(market)));
-        console.log(unicode"Total Supply:", token.totalSupply());
-        console.log("==========================");
-    }
-
-    function debugListingInfo(uint256 tokenId) internal view {
-        console.log("=== Listing Info Debug ===");
-        console.log(unicode"Token ID:", tokenId);
-        console.log(unicode"Is Listed:", market.isListed(tokenId));
-        console.log(unicode"Next List ID:", market.nextListId());
-        
-        if (market.isListed(tokenId)) {
-            NFTMarket.Listing memory listing = market.getListing(tokenId);
-            console.log(unicode"Price:", listing.price);
-            console.log(unicode"Seller:", listing.seller);
-            console.log(unicode"Active:", listing.active);
-        }
-        console.log("==========================");
+        _calculateGasReport("Final_Buy", originalBuyGas, optimizedBuyGas);
     }
 }

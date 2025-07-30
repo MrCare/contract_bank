@@ -2,6 +2,170 @@
  * @Author: Mr.Car
  * @Date: 2025-07-10 08:52:43
 -->
+## [2.0.1] - 2025-07-30
+
+增加`NFTMarket`合约的GAS优化
+
+```Bash
+(base) ➜  contracts git:(main) ✗ forge test test/nftMarket.t.sol -vvv
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 12 tests for test/nftMarket.t.sol:NFTMarketTest
+[PASS] test_BuyNFT() (gas: 481224)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买NFT - 准备阶段
+  测试购买NFT - 原版
+  测试购买NFT - 优化版
+  === Gas Report for BuyNFT ===
+  Original Gas: 58309
+  Optimized Gas: 52760
+  Gas Reduction: 5549
+  Percentage Reduction: 9%
+  ================================
+
+[PASS] test_DelistEvent() (gas: 237602)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试下架事件 - 原版
+  测试下架事件 - 优化版
+
+[PASS] test_FinalGasReport() (gas: 560019)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  
+
+  ==========================================
+            最终Gas优化报告
+  ==========================================
+  === Gas Report for Final_List ===
+  Original Gas: 128422
+  Optimized Gas: 125951
+  Gas Reduction: 2471
+  Percentage Reduction: 1%
+  ================================
+  === Gas Report for Final_Buy ===
+  Original Gas: 63904
+  Optimized Gas: 54356
+  Gas Reduction: 9548
+  Percentage Reduction: 14%
+  ================================
+  ==========================================
+
+[PASS] test_FuzzRandomPriceListing(uint256) (runs: 259, μ: 370133, ~: 370133)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+
+[PASS] test_GetListingByToken() (gas: 328797)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试getListingByToken查询 - 准备阶段
+  测试getListingByToken查询 - 原版
+  测试getListingByToken查询 - 优化版
+  === Gas Report for GetListingByToken ===
+  Original Gas: 3991
+  Optimized Gas: 4061
+  Gas Reduction: 0
+  Percentage Reduction: 0%
+  ================================
+
+[PASS] test_IsListed() (gas: 324535)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试isListed查询 - 准备阶段
+  测试isListed查询 - 原版
+  测试isListed查询 - 优化版
+  === Gas Report for IsListed ===
+  Original Gas: 2099
+  Optimized Gas: 2166
+  Gas Reduction: 0
+  Percentage Reduction: 0%
+  ================================
+
+[PASS] test_ListEvent() (gas: 272485)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架事件 - 原版
+  测试上架事件 - 优化版
+
+[PASS] test_ListNFT() (gas: 378264)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试上架NFT - 原版
+  测试上架NFT - 优化版
+  === Gas Report for ListNFT ===
+  Original Gas: 128422
+  Optimized Gas: 125954
+  Gas Reduction: 2468
+  Percentage Reduction: 1%
+  ================================
+
+[PASS] test_RevertInvalidPrice() (gas: 37540)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试无效价格 - 原版
+  测试无效价格 - 优化版
+
+[PASS] test_RevertNFTNotListed() (gas: 24352)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试购买未上架NFT - 原版
+  测试购买未上架NFT - 优化版
+
+[PASS] test_RevertNotOwner() (gas: 30254)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试非所有者上架 - 原版
+  测试非所有者上架 - 优化版
+
+[PASS] test_SoldEvent() (gas: 369877)
+Logs:
+  Total Supply: 100000000000000000000
+  Owner token balance: 20000000000000000000
+  User1 token balance: 40000000000000000000
+  User2 token balance: 40000000000000000000
+  测试售出事件 - 原版
+  测试售出事件 - 优化版
+
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 79.13ms (96.28ms CPU time)
+
+Ran 1 test suite in 625.66ms (79.13ms CPU time): 12 tests passed, 0 failed, 0 skipped (12 total tests)
+```
+
 ## [2.0.0] - 2025-07-15
 
 完成一个极简的Dapp界面，增加钱包连接与和tokenBank的极简交互

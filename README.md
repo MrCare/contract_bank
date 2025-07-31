@@ -2,6 +2,18 @@
  * @Author: Mr.Car
  * @Date: 2025-07-10 08:52:43
 -->
+## [2.0.2] - 2025-07-31
+升级`bank`合约为`bankLinkTable`, 
+1. 使用离线计算和链表维护存储金额前10排序;
+2. 通过payable`fallback`支持携带参数直接转账给合约;
+```Bash
+cast send $CONTRACT_ADDRESS \
+    --value 1ether \
+    --data $(cast abi-encode "f(address)" "0x742d35Cc6635C0532925a3b8D51e48c06A5b8E68") \
+    --private-key $PRIVATE_KEY \
+    --rpc-url $RPC_URL
+```
+
 ## [2.0.1] - 2025-07-30
 
 增加`NFTMarket`合约的GAS优化
